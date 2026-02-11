@@ -1,15 +1,37 @@
-import { useQuery } from "@apollo/client";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@apollo/client";
 import moment from "moment";
 import { List, Typography } from "antd";
-import { GET_EVENT } from "./queries";
+import { GET_EVENT, PARTICIPANTS_SUBSCRIPTION } from "./queries";
 import Loading from "components/Loading";
 
 const { Paragraph, Text, Title } = Typography;
 
 function Event() {
   const { id } = useParams();
-  const { loading, error, data } = useQuery(GET_EVENT, { variables: { id } });
+  const { loading, error, data, subscribeToMore } = useQuery(GET_EVENT, {
+    variables: { id },
+  });
+
+  useEffect(() => {
+    subscribeToMore({
+      document: PARTICIPANTS_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        console.log({ prev, subscriptionData });
+
+        if (!subscriptionData.data) return prev;
+        const newParticipantItem = subscriptionData.data.participantAdded;
+
+        return {
+          event: {
+            ...prev.event,
+            participants: [...prev.event.participants, newParticipantItem],
+          },
+        };
+      },
+    });
+  }, [subscribeToMore]);
 
   if (loading) {
     return <Loading />;

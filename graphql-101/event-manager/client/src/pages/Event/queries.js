@@ -23,3 +23,16 @@ export const GET_EVENT = gql`
     }
   }
 `;
+
+export const PARTICIPANTS_SUBSCRIPTION = gql`
+  subscription participantAdded($event_id: ID) {
+    participantAdded(event_id: $event_id) {
+      id
+      user {
+        id
+        username
+        email
+      }
+    }
+  }
+`;
