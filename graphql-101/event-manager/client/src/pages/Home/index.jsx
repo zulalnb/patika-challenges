@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import moment from "moment";
 import { Card, Flex, List, Typography } from "antd";
 import { GET_EVENTS } from "./queries";
 import Loading from "components/Loading";
@@ -27,7 +28,9 @@ const Home = () => {
             <Card>
               <Flex justify="space-between">
                 <Text strong>{item.title}</Text>
-                <Text className={styles.date}>{item.date}</Text>
+                <Text className={styles.date}>
+                  {moment(item.date).format("DD.MM.YYYY")}
+                </Text>
               </Flex>
               <Text>{clipText(item.desc)}...</Text>
             </Card>
