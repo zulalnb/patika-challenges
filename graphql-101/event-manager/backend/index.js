@@ -27,7 +27,7 @@ const typeDefs = `#graphql
 
     # Event
     events: [Event!]!
-
+    event(id: ID!): Event!
   }
 `;
 
@@ -40,6 +40,8 @@ const resolvers = {
 
     // event
     events: () => events,
+    event: (parent, args) =>
+      events.find((event) => event.id.toString() === args.id),
   },
 };
 
