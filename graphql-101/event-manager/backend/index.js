@@ -47,6 +47,7 @@ const typeDefs = `#graphql
 
     # Participant
     participants: [Participant!]!
+    participant(id: ID!): Participant!
   }
 `;
 
@@ -69,6 +70,8 @@ const resolvers = {
 
     // participant
     participants: () => participants,
+    participant: (parents, args) =>
+      participants.find((participant) => participant.id.toString() === args.id),
   },
 };
 
