@@ -37,6 +37,7 @@ const typeDefs = `#graphql
 
     # Location
     locations: [Location!]!
+    location(id: ID!): Location!
   }
 `;
 
@@ -54,6 +55,8 @@ const resolvers = {
 
     // location
     locations: () => locations,
+    location: (parents, args) =>
+      locations.find((location) => location.id.toString() === args.id),
   },
 };
 
