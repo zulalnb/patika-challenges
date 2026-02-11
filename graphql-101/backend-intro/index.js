@@ -1,34 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-
-const author = {
-  id: "1",
-  name: "Albert",
-  surname: "Camus",
-  age: 50,
-  books: [
-    {
-      id: "msys6w67w",
-      title: "Yabancı",
-      score: 6.9,
-      isPublished: true,
-    },
-    {
-      id: "msys6w67t",
-      title: "Sisifos Söyleni",
-      score: 6.9,
-      isPublished: true,
-    },
-  ],
-};
-
-const book = {
-  id: "msys6w67w",
-  title: "Yabancı",
-  author,
-  score: 6.9,
-  isPublished: true,
-};
+import { authors, books } from "./data.js";
 
 const typeDefs = `#graphql
   type Author {
@@ -48,15 +20,27 @@ const typeDefs = `#graphql
   }
 
   type Query {
-    book: Book
-    author: Author
+    books: [Book!]
+    book(id: ID!): Book!
+
+    authors: [Author!]
+    author(id: ID!): Author!
   }
 `;
 
 const resolvers = {
   Query: {
-    book: () => book,
-    author: () => author,
+    books: () => books,
+    book: (parent, args) => {
+      const data = books.find((book) => book.id === args.id);
+      return data;
+    },
+
+    authors: () => authors,
+    author: (parent, args) => {
+      const data = authors.find((author) => author.id === args.id);
+      return data;
+    },
   },
 };
 
