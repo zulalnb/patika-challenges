@@ -1,6 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { events, users } from "./data.js";
+import { events, locations, users } from "./data.js";
 
 const typeDefs = `#graphql
   type User {
@@ -16,8 +16,14 @@ const typeDefs = `#graphql
     date: String!
     from: String!
     to: String!
-    location_id: Int!
-    user_id: Int!
+  }
+
+  type Location {
+    id: ID!
+    name: String!
+    desc: String!
+    lat: Float!
+    lng: Float!
   }
 
   type Query {
@@ -28,6 +34,9 @@ const typeDefs = `#graphql
     # Event
     events: [Event!]!
     event(id: ID!): Event!
+
+    # Location
+    locations: [Location!]!
   }
 `;
 
@@ -42,6 +51,9 @@ const resolvers = {
     events: () => events,
     event: (parent, args) =>
       events.find((event) => event.id.toString() === args.id),
+
+    // location
+    locations: () => locations,
   },
 };
 
