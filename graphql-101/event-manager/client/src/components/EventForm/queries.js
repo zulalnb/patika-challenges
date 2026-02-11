@@ -8,3 +8,11 @@ export const GET_LOCATIONS = gql`
     }
   }
 `;
+
+export const ADD_EVENT = gql`
+  mutation addEvent($data: CreateEventInput!) {
+    addEvent(data: $data) {
+      id
+    }
+  }
+`;

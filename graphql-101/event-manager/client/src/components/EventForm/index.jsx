@@ -1,13 +1,20 @@
-import { useQuery } from "@apollo/client";
+import moment from "moment";
+import { useMutation, useQuery } from "@apollo/client";
 import { Button, DatePicker, Form, Input, message, Select } from "antd";
-import { GET_LOCATIONS } from "./queries";
+import { ADD_EVENT, GET_LOCATIONS } from "./queries";
 
 const { Option } = Select;
 
 function EventForm() {
-  const { loading, data } = useQuery(GET_LOCATIONS);
-  const handleSubmit = async () => {
+  const { loading: locations_loading, data: locations_data } =
+    useQuery(GET_LOCATIONS);
+
+  const [saveEvent, { loading }] = useMutation(ADD_EVENT);
+
+  const handleSubmit = async (values) => {
     try {
+      values.date = moment(values.date.$d).format("YYYY-MM-DD");
+      await saveEvent({ variables: { data: { ...values, user_id: "1" } } });
       message.success("Event created successfully!", 4);
     } catch (error) {
       message.error("Failed to create event: " + error.message, 4);
@@ -19,7 +26,7 @@ function EventForm() {
       name="basic"
       layout="vertical"
       onFinish={handleSubmit}
-      //   disabled={loading}
+      disabled={loading}
       autoComplete="off"
       style={{
         backgroundColor: "#dfe4ea",
@@ -121,9 +128,13 @@ function EventForm() {
           },
         ]}
       >
-        <Select disabled={loading} loading={loading} size="large">
-          {data &&
-            data.locations.map((location) => (
+        <Select
+          disabled={locations_loading}
+          loading={locations_loading}
+          size="large"
+        >
+          {locations_data &&
+            locations_data.locations.map((location) => (
               <Option key={location.id} value={location.id}>
                 {location.name}
               </Option>
@@ -132,12 +143,7 @@ function EventForm() {
       </Form.Item>
 
       <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          // loading={loading}
-          size="large"
-        >
+        <Button type="primary" htmlType="submit" loading={loading} size="large">
           Add Event
         </Button>
       </Form.Item>
