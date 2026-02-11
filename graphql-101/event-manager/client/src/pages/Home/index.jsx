@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import moment from "moment";
 import { Card, Flex, List, Typography } from "antd";
-import { GET_EVENTS } from "./queries";
+import { EVENTS_SUBSCRIPTION, GET_EVENTS } from "./queries";
 import Loading from "components/Loading";
 import styles from "./styles.module.css";
 import { clipText } from "../../utils";
@@ -10,7 +11,22 @@ import { clipText } from "../../utils";
 const { Text, Title } = Typography;
 
 const Home = () => {
-  const { loading, error, data } = useQuery(GET_EVENTS);
+  const { loading, error, data, subscribeToMore } = useQuery(GET_EVENTS);
+
+  useEffect(() => {
+    subscribeToMore({
+      document: EVENTS_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        console.log({ prev, subscriptionData });
+
+        if (!subscriptionData.data) return prev;
+
+        return {
+          events: [subscriptionData.data.eventCreated, ...prev.events],
+        };
+      },
+    });
+  }, [subscribeToMore]);
 
   if (loading) {
     return <Loading />;
