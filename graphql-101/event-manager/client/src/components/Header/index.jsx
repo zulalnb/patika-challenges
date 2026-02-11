@@ -1,5 +1,5 @@
-import { Col, Row } from "antd";
-import { Typography } from "antd";
+import { Link } from "react-router-dom";
+import { Col, Row, Typography } from "antd";
 import styles from "./styles.module.css";
 
 const { Title } = Typography;
@@ -7,9 +7,11 @@ const { Title } = Typography;
 function Header() {
   return (
     <Row justify="center" className={styles["header-container"]}>
-      <Col>
-        <Title>Event Sync</Title>
-      </Col>
+      <Link to="/">
+        <Col>
+          <Title>Event Sync</Title>
+        </Col>
+      </Link>
     </Row>
   );
 }

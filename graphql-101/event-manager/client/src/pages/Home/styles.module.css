@@ -5,3 +5,7 @@
 .date {
   white-space: nowrap;
 }
+
+.event-title {
+  margin: 0;
+}

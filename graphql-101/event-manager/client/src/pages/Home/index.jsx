@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import moment from "moment";
 import { Card, Flex, List, Typography } from "antd";
@@ -6,7 +7,7 @@ import Loading from "components/Loading";
 import styles from "./styles.module.css";
 import { clipText } from "../../utils";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const Home = () => {
   const { loading, error, data } = useQuery(GET_EVENTS);
@@ -25,15 +26,19 @@ const Home = () => {
         dataSource={data.events}
         renderItem={(item) => (
           <List.Item className={styles["list-item"]}>
-            <Card>
-              <Flex justify="space-between">
-                <Text strong>{item.title}</Text>
-                <Text className={styles.date}>
-                  {moment(item.date).format("DD.MM.YYYY")}
-                </Text>
-              </Flex>
-              <Text>{clipText(item.desc)}...</Text>
-            </Card>
+            <Link to={`/event/${item.id}`}>
+              <Card>
+                <Flex justify="space-between" gap={1}>
+                  <Title level={4} className={styles["event-title"]}>
+                    {item.title}
+                  </Title>
+                  <Text className={styles.date}>
+                    {moment(item.date).format("DD.MM.YYYY")}
+                  </Text>
+                </Flex>
+                <Text>{clipText(item.desc)}...</Text>
+              </Card>
+            </Link>
           </List.Item>
         )}
       />
