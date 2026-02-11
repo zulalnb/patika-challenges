@@ -4,9 +4,10 @@ import { useQuery } from "@apollo/client";
 import moment from "moment";
 import { Card, Flex, List, Typography } from "antd";
 import { EVENTS_SUBSCRIPTION, GET_EVENTS } from "./queries";
+import { clipText } from "utils";
 import Loading from "components/Loading";
+import EventForm from "components/EventForm";
 import styles from "./styles.module.css";
-import { clipText } from "../../utils";
 
 const { Text, Title } = Typography;
 
@@ -37,6 +38,7 @@ const Home = () => {
   }
   return (
     <div>
+      <EventForm />
       <List
         split={false}
         dataSource={data.events}
