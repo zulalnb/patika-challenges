@@ -1,0 +1,7 @@
+.list-item {
+  display: block !important;
+}
+
+.date {
+  white-space: nowrap;
+}
