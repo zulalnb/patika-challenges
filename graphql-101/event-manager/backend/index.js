@@ -7,7 +7,7 @@ const typeDefs = `#graphql
     id: ID!
     username: String!
     email: String!
-    participants: [Participant]!
+    participants: [Participant!]!
   }
 
   type Event {
@@ -19,6 +19,7 @@ const typeDefs = `#graphql
     to: String!
     user: User!
     participants: [Participant!]!
+    location: Location!
   }
 
   type Location {
@@ -81,6 +82,8 @@ const resolvers = {
     user: (parent) => users.find((user) => user.id === parent.user_id),
     participants: (parent) =>
       participants.filter((participant) => participant.event_id === parent.id),
+    location: (parent) =>
+      locations.find((location) => location.id === parent.location_id),
   },
 
   Participant: {
