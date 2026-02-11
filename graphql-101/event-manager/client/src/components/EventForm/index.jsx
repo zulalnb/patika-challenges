@@ -1,7 +1,8 @@
+import { useRef } from "react";
 import moment from "moment";
 import { useMutation, useQuery } from "@apollo/client";
 import { Button, DatePicker, Form, Input, message, Select } from "antd";
-import { ADD_EVENT, GET_LOCATIONS } from "./queries";
+import { ADD_EVENT, GET_LOCATIONS, GET_USERS } from "./queries";
 
 const { Option } = Select;
 
@@ -9,13 +10,18 @@ function EventForm() {
   const { loading: locations_loading, data: locations_data } =
     useQuery(GET_LOCATIONS);
 
+  const { loading: users_loading, data: users_data } = useQuery(GET_USERS);
+
   const [saveEvent, { loading }] = useMutation(ADD_EVENT);
+
+  const formRef = useRef();
 
   const handleSubmit = async (values) => {
     try {
       values.date = moment(values.date.$d).format("YYYY-MM-DD");
-      await saveEvent({ variables: { data: { ...values, user_id: "1" } } });
+      await saveEvent({ variables: { data: values } });
       message.success("Event created successfully!", 4);
+      formRef.current.resetFields();
     } catch (error) {
       message.error("Failed to create event: " + error.message, 4);
     }
@@ -23,6 +29,11 @@ function EventForm() {
 
   return (
     <Form
+      formItemLayout={{
+        labelCol: { span: 8 },
+        wrapperCol: { span: 16 },
+      }}
+      ref={formRef}
       name="basic"
       layout="vertical"
       onFinish={handleSubmit}
@@ -137,6 +148,25 @@ function EventForm() {
             locations_data.locations.map((location) => (
               <Option key={location.id} value={location.id}>
                 {location.name}
+              </Option>
+            ))}
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name="user_id"
+        label="User"
+        rules={[
+          {
+            required: true,
+            message: "Please select your user!",
+          },
+        ]}
+      >
+        <Select disabled={users_loading} loading={users_loading} size="large">
+          {users_data &&
+            users_data.users.map((user) => (
+              <Option key={user.id} value={user.id}>
+                {user.username}
               </Option>
             ))}
         </Select>

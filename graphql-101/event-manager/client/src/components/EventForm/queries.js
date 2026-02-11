@@ -9,6 +9,15 @@ export const GET_LOCATIONS = gql`
   }
 `;
 
+export const GET_USERS = gql`
+  query getAllUsers {
+    users {
+      id
+      username
+    }
+  }
+`;
+
 export const ADD_EVENT = gql`
   mutation addEvent($data: CreateEventInput!) {
     addEvent(data: $data) {
