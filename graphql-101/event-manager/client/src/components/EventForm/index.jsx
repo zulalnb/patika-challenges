@@ -1,8 +1,11 @@
+import { useQuery } from "@apollo/client";
 import { Button, DatePicker, Form, Input, message, Select } from "antd";
+import { GET_LOCATIONS } from "./queries";
 
 const { Option } = Select;
 
 function EventForm() {
+  const { loading, data } = useQuery(GET_LOCATIONS);
   const handleSubmit = async () => {
     try {
       message.success("Event created successfully!", 4);
@@ -39,7 +42,16 @@ function EventForm() {
         <Input size="large" placeholder="Enter event title" />
       </Form.Item>
 
-      <Form.Item label="Description" name="desc">
+      <Form.Item
+        label="Description"
+        name="desc"
+        rules={[
+          {
+            required: true,
+            message: "Please input your description!",
+          },
+        ]}
+      >
         <Input.TextArea
           rows={4}
           size="large"
@@ -47,7 +59,16 @@ function EventForm() {
         />
       </Form.Item>
 
-      <Form.Item label="Event Date" name="date">
+      <Form.Item
+        label="Event Date"
+        name="date"
+        rules={[
+          {
+            required: true,
+            message: "Please input your date!",
+          },
+        ]}
+      >
         <DatePicker />
       </Form.Item>
 
@@ -62,6 +83,7 @@ function EventForm() {
           rules={[
             {
               required: true,
+              message: "Please input your start time!",
             },
           ]}
           style={{
@@ -76,6 +98,7 @@ function EventForm() {
           rules={[
             {
               required: true,
+              message: "Please input your end time!",
             },
           ]}
           style={{
@@ -86,6 +109,26 @@ function EventForm() {
         >
           <Input placeholder="To" />
         </Form.Item>
+      </Form.Item>
+
+      <Form.Item
+        name="location_id"
+        label="Location"
+        rules={[
+          {
+            required: true,
+            message: "Please select your location!",
+          },
+        ]}
+      >
+        <Select disabled={loading} loading={loading} size="large">
+          {data &&
+            data.locations.map((location) => (
+              <Option key={location.id} value={location.id}>
+                {location.name}
+              </Option>
+            ))}
+        </Select>
       </Form.Item>
 
       <Form.Item>
