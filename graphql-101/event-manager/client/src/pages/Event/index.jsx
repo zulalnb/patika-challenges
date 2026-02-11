@@ -32,6 +32,10 @@ function Event() {
         <Text>{event.user.username}</Text>
       </div>
       <div>
+        <Text strong>Location: </Text>
+        <Text>{event.location.name}</Text>
+      </div>
+      <div>
         <Title level={4}>Participants</Title>
         {event.participants && (
           <List
