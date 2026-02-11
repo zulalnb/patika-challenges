@@ -16,6 +16,7 @@ const typeDefs = `#graphql
     date: String!
     from: String!
     to: String!
+    user: User!
   }
 
   type Location {
@@ -72,6 +73,10 @@ const resolvers = {
     participants: () => participants,
     participant: (parents, args) =>
       participants.find((participant) => participant.id.toString() === args.id),
+  },
+
+  Event: {
+    user: (parent) => users.find((user) => user.id === parent.user_id),
   },
 };
 
