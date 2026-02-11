@@ -3,22 +3,28 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 
 const typeDefs = `#graphql
   type Book {
-    title: String
-    author: String
+    title: String!
+    author: String!
   }
 
   type Query {
-    book: Book
+    book: [Book!]!
   }
 `;
 
 const resolvers = {
   Query: {
     book: () => {
-      return {
-        title: "Yabancı",
-        author: "Albert Camus",
-      };
+      return [
+        {
+          title: "Yabancı",
+          author: "Albert Camus",
+        },
+        {
+          title: "Deneme Kitap",
+          author: "Deneme Yazar",
+        },
+      ];
     },
   },
 };
