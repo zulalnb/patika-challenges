@@ -10,12 +10,16 @@ const typeDefs = `#graphql
   }
   type Query {
     users: [User!]!
+    user(id: ID!): User!
   }
 `;
 
 const resolvers = {
   Query: {
     users: () => users,
+    user: (parent, args) => {
+      return users.find((user) => user.id.toString() === args.id);
+    },
   },
 };
 
