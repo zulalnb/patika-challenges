@@ -5,7 +5,7 @@ let socket;
 export const init = () => {
   console.log("Connecting...");
 
-  socket = io("http://localhost:3000", {
+  socket = io("http://localhost:4000", {
     transports: ["websocket"],
   });
 
