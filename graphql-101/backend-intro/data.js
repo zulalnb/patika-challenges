@@ -4,20 +4,6 @@ export const authors = [
     name: "Albert",
     surname: "Camus",
     age: 50,
-    books: [
-      {
-        id: "1",
-        title: "Yabancı",
-        score: 6.9,
-        isPublished: true,
-      },
-      {
-        id: "2",
-        title: "Sisifos Söyleni",
-        score: 6.9,
-        isPublished: true,
-      },
-    ],
   },
   {
     id: "2",
@@ -31,15 +17,29 @@ export const books = [
   {
     id: "1",
     title: "Yabancı",
-    author: authors[0],
+    author_id: "1",
     score: 6.9,
     isPublished: true,
   },
   {
     id: "2",
     title: "Sisifos Söyleni",
-    author: authors[0],
+    author_id: "1",
     score: 6,
+    isPublished: true,
+  },
+  {
+    id: "3",
+    title: "Bulantı",
+    author_id: "2",
+    score: 7,
+    isPublished: true,
+  },
+  {
+    id: "4",
+    title: "Özgürlük Yolları 1",
+    author_id: "2",
+    score: 8,
     isPublished: true,
   },
 ];
