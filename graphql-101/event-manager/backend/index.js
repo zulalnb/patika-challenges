@@ -141,6 +141,7 @@ const typeDefs = `#graphql
     addParticipant(data: CreateParticipantInput!): Participant!
     updateParticipant(id: ID!, data: UpdateParticipantInput!): Participant!
     deleteParticipant(id: ID!): Participant!
+    deleteAllParticipants: DeleteAllOutput!
   }
 `;
 
@@ -291,6 +292,11 @@ const resolvers = {
       participants.splice(participant_index, 1);
 
       return deleted_participant;
+    },
+    deleteAllParticipants: () => {
+      const length = participants.length;
+      participants.splice(0, length);
+      return { count: length };
     },
   },
   Query: {
