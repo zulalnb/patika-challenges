@@ -44,15 +44,21 @@ const typeDefs = `#graphql
 
   type Mutation {
     createUser(fullName: String!): User!
+    createPost(title: String!, user_id: ID!): Post!
   }
 `;
 
 const resolvers = {
   Mutation: {
-    createUser: (parent, args) => {
-      const user = { id: nanoid(), fullName: args.fullName };
+    createUser: (parent, { fullName }) => {
+      const user = { id: nanoid(), fullName };
       users.push(user);
       return user;
+    },
+    createPost: (parents, { title, user_id }) => {
+      const post = { id: nanoid(), title, user_id };
+      posts.push(post);
+      return post;
     },
   },
   Query: {
