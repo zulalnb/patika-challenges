@@ -22,8 +22,8 @@ services:
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ACTION_BASE_URL: http://host.docker.internal:4000
-      HASURA_GRAPHL_JWT_SECRET: '{"type": "HS256", "key": "my-secret-token-to-change-in-production!"}'
-      HASURA_GRAPHQL_UNAUTHORIZED_USER_ROLE: "anonymous"
+      HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "my-secret-token-to-change-in-production!"}'
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
       ## uncomment next line to run console offline (i.e load console assets from server instead of CDN)
       # HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
       ## uncomment next line to set an admin secret
