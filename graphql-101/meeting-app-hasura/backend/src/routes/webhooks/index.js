@@ -1,7 +1,10 @@
 import express from "express";
 import nodemailer from "nodemailer";
 import Hasura from "../../clients/hasura";
-import { GET_MEETING_PARTICIPANTS } from "./queries";
+import {
+  GET_MEETING_PARTICIPANTS,
+  GET_MEETING_PARTICIPANTS_REMINDER_QUERY,
+} from "./queries";
 import moment from "moment";
 import axios from "axios";
 
@@ -38,7 +41,7 @@ router.post("/meeting_created", async (req, res, next) => {
       webhook: "{{ACTION_BASE_URL}}/webhooks/meeting_reminder",
       schedule_at: moment(meetings_by_pk.meeting_date).subtract(2, "minutes"),
       payload: {
-        meetingId: meeting.id,
+        meeting_id: meeting.id,
       },
     },
   };
@@ -52,6 +55,7 @@ router.post("/meeting_created", async (req, res, next) => {
   });
 
   const event_data = add_event.data;
+  console.log(event_data);
 
   const mailOptions = {
     from: "myhasurabackend@gmail.com",
@@ -70,7 +74,38 @@ router.post("/meeting_created", async (req, res, next) => {
 });
 
 router.post("/meeting_reminder", async (req, res, next) => {
-  console.log("Meeting reminder");
+  const { meeting_id } = req.body.payload;
+
+  console.log("Meeting reminder: meeting_id: ", meeting_id);
+
+  const { meetings_by_pk } = await Hasura.request(
+    GET_MEETING_PARTICIPANTS_REMINDER_QUERY,
+    {
+      id: meeting_id,
+    }
+  );
+
+  const title = meetings_by_pk.title;
+  const { email } = meetings_by_pk.user;
+  const participants = meetings_by_pk.participants.map(
+    ({ user }) => user.email
+  );
+  participants.push(email);
+
+  const mailOptions = {
+    from: "myhasurabackend@gmail.com",
+    to: participants.toString(),
+    subject: `meeting named '${title}' starting soon`,
+    text: `meeting named '${title}' is going to start two minutes later. Click to the link below to join`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      throw new Error(error);
+    }
+    console.log("Email sent: ", info.response);
+    res.json({ info });
+  });
 });
 
 export default router;
