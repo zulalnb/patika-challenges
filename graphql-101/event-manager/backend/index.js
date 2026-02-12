@@ -147,6 +147,7 @@ const typeDefs = `#graphql
   type Subscription {
     userCreated: User!
     eventCreated: Event!
+    participantAdded: Participant!
   }
 `;
 
@@ -159,6 +160,9 @@ const resolvers = {
     },
     eventCreated: {
       subscribe: () => pubSub.subscribe("eventCreated"),
+    },
+    participantAdded: {
+      subscribe: () => pubSub.subscribe("participantAdded"),
     },
   },
   Mutation: {
@@ -281,9 +285,12 @@ const resolvers = {
     },
 
     // Participant
-    addParticipant: (_, { data }) => {
+    addParticipant: (_, { data }, { pubSub }) => {
       const participant = { id: nanoid(), ...data };
       participants.push(participant);
+
+      pubSub.publish("participantAdded", { participantAdded: participant });
+
       return participant;
     },
     updateParticipant: (_, { id, data }) => {
