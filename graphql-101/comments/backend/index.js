@@ -91,6 +91,7 @@ const typeDefs = `#graphql
     createPost(data: CreatePostInput!): Post!
     updatePost(id: ID!, data: UpdatePostInput!): Post!
     deletePost(id: ID!): Post!
+    deleteAllPosts: DeleteAllOutput!
 
     # Comment
     createComment(data: CreateCommentInput!): Comment!
@@ -166,6 +167,11 @@ const resolvers = {
       posts.splice(post_index, 1);
 
       return deleted_post;
+    },
+    deleteAllPosts: () => {
+      const length = posts.length;
+      posts.splice(0, length);
+      return { count: length };
     },
 
     // Comment
