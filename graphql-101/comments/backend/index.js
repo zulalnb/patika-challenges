@@ -85,6 +85,7 @@ const typeDefs = `#graphql
     # Post
     createPost(data: CreatePostInput!): Post!
     updatePost(id: ID!, data: UpdatePostInput!): Post!
+    deletePost(id: ID!): Post!
 
     # Comment
     createComment(data: CreateCommentInput!): Comment!
@@ -142,6 +143,18 @@ const resolvers = {
         ...data,
       });
       return updated_post;
+    },
+    deletePost: (parent, { id }) => {
+      const post_index = posts.findIndex((post) => post.id === id);
+
+      if (post_index === -1) {
+        throw new Error("Post not found.");
+      }
+
+      const deleted_post = posts[post_index];
+      posts.splice(post_index, 1);
+
+      return deleted_post;
     },
 
     // Comment
