@@ -135,6 +135,7 @@ const typeDefs = `#graphql
     addLocation(data: CreateLocationInput!): Location!
     updateLocation(id: ID!, data: UpdateLocationInput!): Location!
     deleteLocation(id: ID!): Location!
+    deleteAllLocations: DeleteAllOutput!
 
     # Participant
     addParticipant(data: CreateParticipantInput!): Participant!
@@ -250,6 +251,11 @@ const resolvers = {
       locations.splice(loc_index, 1);
 
       return deleted_loc;
+    },
+    deleteAllLocations: () => {
+      const length = locations.length;
+      locations.splice(0, length);
+      return { count: length };
     },
 
     // Participant
