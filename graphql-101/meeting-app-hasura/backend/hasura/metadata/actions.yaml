@@ -2,7 +2,7 @@ actions:
   - name: register
     definition:
       kind: synchronous
-      handler: '{{ACTION_BASE_URL}}/register'
+      handler: '{{ACTION_BASE_URL}}/auth/register'
       forward_client_headers: true
 custom_types:
   enums: []
