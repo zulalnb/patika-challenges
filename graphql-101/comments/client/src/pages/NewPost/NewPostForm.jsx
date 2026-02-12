@@ -1,4 +1,6 @@
-import { Button, Form, Input, Select } from "antd";
+import { useQuery } from "@apollo/client";
+import { Button, Flex, Form, Input, Select } from "antd";
+import { GET_USERS } from "./queries";
 
 const { Option } = Select;
 
@@ -10,13 +12,12 @@ const onFinishFailed = (errorInfo) => {
 };
 
 function NewPostForm() {
+  const { loading: get_users_loading, data: users_data } = useQuery(GET_USERS);
+
   return (
     <Form
       name="basic"
       layout="vertical"
-      initialValues={{
-        remember: true,
-      }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
@@ -65,25 +66,31 @@ function NewPostForm() {
         rules={[
           {
             required: true,
+            message: "Please select your user!",
           },
         ]}
       >
         <Select
+          disabled={get_users_loading}
+          loading={get_users_loading}
           size="large"
-          // onChange={onGenderChange}
-          allowClear
         >
-          <Option value="male">male</Option>
-          <Option value="female">female</Option>
-          <Option value="other">other</Option>
+          {users_data &&
+            users_data.users.map((user) => (
+              <Option key={user.id} value={user.id}>
+                {user.fullName}
+              </Option>
+            ))}
         </Select>
       </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
+      <Flex justify="flex-end">
+        <Form.Item>
+          <Button type="primary" htmlType="submit" size="large">
+            Submit
+          </Button>
+        </Form.Item>
+      </Flex>
     </Form>
   );
 }
