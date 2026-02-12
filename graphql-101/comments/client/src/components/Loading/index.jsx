@@ -1,12 +1,11 @@
-import { Spin } from "antd";
+import { Flex, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import styles from "./styles.module.css";
 
 function Loading() {
   return (
-    <div className={styles.loading}>
+    <Flex align="center" justify="center">
       <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-    </div>
+    </Flex>
   );
 }
 

@@ -5,14 +5,22 @@ import styles from "./styles.module.css";
 import Home from "pages/Home";
 import NewPost from "pages/NewPost";
 import Post from "pages/Post";
-import HeaderMenu from "./HeaderMenu";
+import HeaderMenu from "components/HeaderMenu";
+import PostCounter from "components/PostCounter";
 
 function App() {
   return (
     <div className={styles.container}>
-      <Row justify="center">
+      <Row justify="center" style={{ marginTop: "24px" }}>
         <Col span={14}>
-          <HeaderMenu />
+          <Row>
+            <Col span={18}>
+              <HeaderMenu />
+            </Col>
+            <Col span={6}>
+              <PostCounter />
+            </Col>
+          </Row>
         </Col>
       </Row>
       <Row justify="center">
