@@ -4,8 +4,9 @@ import { Image, Typography } from "antd";
 
 import { GET_POST } from "./queries";
 import Loading from "components/Loading";
+import styles from "./styles.module.css";
 
-const { Title } = Typography;
+const { Paragraph, Title } = Typography;
 
 function Post() {
   const { id } = useParams();
@@ -25,9 +26,9 @@ function Post() {
     <article>
       <Title>{post.title}</Title>
       <Image src={post.cover} />
-      <div>
+      <Paragraph className={styles.description}>
         <p>{post.description}</p>
-      </div>
+      </Paragraph>
     </article>
   );
 }
