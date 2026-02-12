@@ -1,15 +1,34 @@
+import { useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { Button, Divider, Flex, List } from "antd";
-import { GET_POST_COMMENTS } from "./queries";
+import { COMMENTS_SUBSCRIPTIONS, GET_POST_COMMENTS } from "./queries";
 import Comment from "components/Comment";
 
 function Comments({ post_id }) {
-  const [loadComments, { loading, error, data, called }] = useLazyQuery(
-    GET_POST_COMMENTS,
-    {
+  const [loadComments, { called, loading, error, data, subscribeToMore }] =
+    useLazyQuery(GET_POST_COMMENTS, {
       variables: { id: post_id },
-    },
-  );
+    });
+
+  useEffect(() => {
+    if (!loading && called) {
+      subscribeToMore({
+        document: COMMENTS_SUBSCRIPTIONS,
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev;
+
+          const newCommentItem = subscriptionData.data.commentCreated;
+
+          return {
+            post: {
+              ...prev.post,
+              comments: [...prev.post.comments, newCommentItem],
+            },
+          };
+        },
+      });
+    }
+  }, [loading, called, subscribeToMore]);
 
   const btnIsVisible = !called || (!loading && !data);
 
