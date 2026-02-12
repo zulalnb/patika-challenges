@@ -1,37 +1,15 @@
-import path from "path";
-import { fileURLToPath, pathToFileURL } from "url";
-import { loadFiles } from "@graphql-tools/load-files";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
+import { createServer } from "node:http";
+import { createYoga } from "graphql-yoga";
+import pubSub from "./pubSub.js";
 
-// Handle ES module filename and directory paths
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import db from "./data.js";
+import schema from "./graphql/schema.js";
 
-// Load all typeDefs (.graphql files) from the type-defs folder
-const loadedTypeDefs = await loadFiles(
-  path.join(__dirname, "./type-defs/*.graphql"),
-  {
-    requireMethod: async (filePath) => {
-      return (await import(pathToFileURL(filePath).href)).default;
-    },
-  },
-);
-
-// Load all resolver files (.js) from the resolvers folder
-const loadedResolvers = await loadFiles(
-  path.join(__dirname, "./resolvers/*.js"),
-  {
-    requireMethod: async (filePath) => {
-      return (await import(pathToFileURL(filePath).href)).default;
-    },
-  },
-);
-
-// Merge the typeDefs and resolvers into a schema
-const schema = makeExecutableSchema({
-  typeDefs: mergeTypeDefs(loadedTypeDefs),
-  resolvers: mergeResolvers(loadedResolvers),
+const yoga = createYoga({
+  schema,
+  logging: true,
+  context: { pubSub, db },
 });
 
-export default schema;
+const server = createServer(yoga);
+server.listen(4000, () => console.log("Server started on port 4000"));
