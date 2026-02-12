@@ -1,25 +1,39 @@
-import { useQuery } from "@apollo/client";
-import { Button, Flex, Form, Input, Select } from "antd";
-import { GET_USERS } from "./queries";
+import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
+import { Button, Flex, Form, Input, message, Select } from "antd";
+import { GET_USERS, NEW_POST_MUTATION } from "./queries";
 
 const { Option } = Select;
 
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 
 function NewPostForm() {
+  const [savePost, { loading }] = useMutation(NEW_POST_MUTATION);
+
   const { loading: get_users_loading, data: users_data } = useQuery(GET_USERS);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (values) => {
+    console.log("submit", values);
+    try {
+      await savePost({ variables: { data: values } });
+      message.success("Post save successfully!", 4);
+      navigate("/");
+    } catch (error) {
+      message.error("Failed to save post: " + error.message, 4);
+    }
+  };
 
   return (
     <Form
       name="basic"
       layout="vertical"
-      onFinish={onFinish}
+      onFinish={handleSubmit}
       onFinishFailed={onFinishFailed}
+      disabled={loading}
       autoComplete="off"
     >
       <Form.Item
@@ -61,7 +75,7 @@ function NewPostForm() {
       </Form.Item>
 
       <Form.Item
-        name="user"
+        name="user_id"
         label="User"
         rules={[
           {
@@ -86,7 +100,12 @@ function NewPostForm() {
 
       <Flex justify="flex-end">
         <Form.Item>
-          <Button type="primary" htmlType="submit" size="large">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            size="large"
+          >
             Submit
           </Button>
         </Form.Item>
