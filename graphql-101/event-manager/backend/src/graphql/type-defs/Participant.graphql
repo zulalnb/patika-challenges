@@ -1,0 +1,31 @@
+type Query {
+  participants: [Participant!]!
+  participant(id: ID!): Participant!
+}
+
+type Mutation {
+  addParticipant(data: CreateParticipantInput!): Participant!
+  updateParticipant(id: ID!, data: UpdateParticipantInput!): Participant!
+  deleteParticipant(id: ID!): Participant!
+  deleteAllParticipants: DeleteAllOutput!
+}
+
+type Subscription {
+  participantAdded: Participant!
+}
+
+type Participant {
+  id: ID!
+  event: Event!
+  user: User!
+}
+
+input CreateParticipantInput {
+  event_id: ID!
+  user_id: ID!
+}
+
+input UpdateParticipantInput {
+  event_id: ID
+  user_id: ID
+}
