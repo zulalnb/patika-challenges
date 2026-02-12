@@ -43,7 +43,7 @@ const Mutation = {
   // User
   addEvent: (_, { data }, { db, pubSub }) => {
     const event = { id: nanoid(), ...data };
-    db.events.push(event);
+    db.events.unshift(event);
 
     pubSub.publish("eventCreated", { eventCreated: event });
 
@@ -51,7 +51,7 @@ const Mutation = {
   },
   updateEvent: (_, { id, data }, { db }) => {
     const event_index = db.events.findIndex(
-      (event) => event.id.toString() === id
+      (event) => event.id.toString() === id,
     );
     if (event_index === -1) {
       throw new Error("Event not found.");
@@ -65,7 +65,7 @@ const Mutation = {
   },
   deleteEvent: (_, { id }, { db }) => {
     const event_index = db.events.findIndex(
-      (event) => event.id.toString() === id
+      (event) => event.id.toString() === id,
     );
 
     if (event_index === -1) {
@@ -130,7 +130,7 @@ const Mutation = {
   },
   updateParticipant: (_, { id, data }, { db }) => {
     const participant_index = db.participants.findIndex(
-      (participant) => participant.id.toString() === id
+      (participant) => participant.id.toString() === id,
     );
     if (participant_index === -1) {
       throw new Error("Participant not found.");
@@ -144,7 +144,7 @@ const Mutation = {
   },
   deleteParticipant: (_, { id }, { db }) => {
     const participant_index = db.participants.findIndex(
-      (participant) => participant.id.toString() === id
+      (participant) => participant.id.toString() === id,
     );
 
     if (participant_index === -1) {
