@@ -62,6 +62,10 @@ const typeDefs = `#graphql
     text: String!
   }
 
+  type DeleteAllOutput {
+    count: Int!
+  }
+
   type Query {
     # User
     users: [User!]!
@@ -81,6 +85,7 @@ const typeDefs = `#graphql
     createUser(data: CreateUserInput!): User!
     updateUser(id: ID, data: UpdateUserInput!): User!
     deleteUser(id: ID!): User!
+    deleteAllUsers: DeleteAllOutput!
 
     # Post
     createPost(data: CreatePostInput!): Post!
@@ -125,6 +130,11 @@ const resolvers = {
       users.splice(user_index, 1);
 
       return deleted_user;
+    },
+    deleteAllUsers: () => {
+      const length = users.length;
+      users.splice(0, length);
+      return { count: length };
     },
 
     // Post
