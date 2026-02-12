@@ -1,5 +1,5 @@
-import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { createServer } from "node:http";
+import { createPubSub, createSchema, createYoga } from "graphql-yoga";
 import { nanoid } from "nanoid";
 import { events, locations, participants, users } from "./data.js";
 
@@ -145,15 +145,17 @@ const typeDefs = `#graphql
   }
 `;
 
+const pubSub = createPubSub();
+
 const resolvers = {
   Mutation: {
     // User
-    addUser: (parent, { data }) => {
+    addUser: (_, { data }) => {
       const user = { id: nanoid(), ...data };
       users.push(user);
       return user;
     },
-    updateUser: (parent, { id, data }) => {
+    updateUser: (_, { id, data }) => {
       const user_index = users.findIndex((user) => user.id.toString() === id);
       if (user_index === -1) {
         throw new Error("User not found.");
@@ -165,7 +167,7 @@ const resolvers = {
       });
       return updated_user;
     },
-    deleteUser: (parent, { id }) => {
+    deleteUser: (_, { id }) => {
       const user_index = users.findIndex((user) => user.id.toString() === id);
 
       if (user_index === -1) {
@@ -184,12 +186,12 @@ const resolvers = {
     },
 
     // User
-    addEvent: (parent, { data }) => {
+    addEvent: (_, { data }) => {
       const event = { id: nanoid(), ...data };
       events.push(event);
       return event;
     },
-    updateEvent: (parent, { id, data }) => {
+    updateEvent: (_, { id, data }) => {
       const event_index = events.findIndex(
         (event) => event.id.toString() === id,
       );
@@ -203,7 +205,7 @@ const resolvers = {
       });
       return updated_event;
     },
-    deleteEvent: (parent, { id }) => {
+    deleteEvent: (_, { id }) => {
       const event_index = events.findIndex(
         (event) => event.id.toString() === id,
       );
@@ -224,12 +226,12 @@ const resolvers = {
     },
 
     // Location
-    addLocation: (parent, { data }) => {
+    addLocation: (_, { data }) => {
       const location = { id: nanoid(), ...data };
       locations.push(location);
       return location;
     },
-    updateLocation: (parent, { id, data }) => {
+    updateLocation: (_, { id, data }) => {
       const loc_index = locations.findIndex((loc) => loc.id.toString() === id);
       if (loc_index === -1) {
         throw new Error("Location not found.");
@@ -241,7 +243,7 @@ const resolvers = {
       });
       return updated_loc;
     },
-    deleteLocation: (parent, { id }) => {
+    deleteLocation: (_, { id }) => {
       const loc_index = locations.findIndex((loc) => loc.id.toString() === id);
 
       if (loc_index === -1) {
@@ -260,12 +262,12 @@ const resolvers = {
     },
 
     // Participant
-    addParticipant: (parent, { data }) => {
+    addParticipant: (_, { data }) => {
       const participant = { id: nanoid(), ...data };
       participants.push(participant);
       return participant;
     },
-    updateParticipant: (parent, { id, data }) => {
+    updateParticipant: (_, { id, data }) => {
       const participant_index = participants.findIndex(
         (participant) => participant.id.toString() === id,
       );
@@ -279,7 +281,7 @@ const resolvers = {
       });
       return updated_participant;
     },
-    deleteParticipant: (parent, { id }) => {
+    deleteParticipant: (_, { id }) => {
       const participant_index = participants.findIndex(
         (participant) => participant.id.toString() === id,
       );
@@ -302,22 +304,20 @@ const resolvers = {
   Query: {
     // user
     users: () => users,
-    user: (parent, args) =>
-      users.find((user) => user.id.toString() === args.id),
+    user: (_, args) => users.find((user) => user.id.toString() === args.id),
 
     // event
     events: () => events,
-    event: (parent, args) =>
-      events.find((event) => event.id.toString() === args.id),
+    event: (_, args) => events.find((event) => event.id.toString() === args.id),
 
     // location
     locations: () => locations,
-    location: (parents, args) =>
+    location: (_, args) =>
       locations.find((location) => location.id.toString() === args.id),
 
     // participant
     participants: () => participants,
-    participant: (parents, args) =>
+    participant: (_, args) =>
       participants.find((participant) => participant.id.toString() === args.id),
   },
 
@@ -356,13 +356,14 @@ const resolvers = {
   },
 };
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+const yoga = createYoga({
+  schema: createSchema({
+    resolvers,
+    typeDefs,
+  }),
+  logging: true,
+  context: { pubSub },
 });
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
-});
-
-console.log(`🚀  Server ready at: ${url}`);
+const server = createServer(yoga);
+server.listen(4000, () => console.log("Server started on port 4000"));
