@@ -1,7 +1,13 @@
+import { Typography } from "antd";
+import NewPostForm from "./NewPostForm";
+
+const { Title } = Typography;
+
 function NewPost() {
   return (
     <div>
-      <h1>New Post</h1>
+      <Title level={3}>New Post</Title>
+      <NewPostForm />
     </div>
   );
 }
