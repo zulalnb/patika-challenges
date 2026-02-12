@@ -45,6 +45,7 @@ const typeDefs = `#graphql
   type Mutation {
     createUser(fullName: String!): User!
     createPost(title: String!, user_id: ID!): Post!
+    createComment(text: String!, post_id: ID!, user_id: ID!): Comment!
   }
 `;
 
@@ -59,6 +60,11 @@ const resolvers = {
       const post = { id: nanoid(), title, user_id };
       posts.push(post);
       return post;
+    },
+    createComment: (parent, { text, post_id, user_id }) => {
+      const comment = { id: nanoid(), text, post_id, user_id };
+      comments.push(comment);
+      return comment;
     },
   },
   Query: {
