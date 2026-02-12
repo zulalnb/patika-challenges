@@ -72,6 +72,13 @@ const typeDefs = `#graphql
     lng: Float!
   }
 
+  input UpdateLocationInput {
+    name: String
+    desc: String
+    lat: Float
+    lng: Float
+  }
+
   # Participant
   type Participant {
     id: ID!
@@ -113,6 +120,7 @@ const typeDefs = `#graphql
 
     # Location
     addLocation(data: CreateLocationInput!): Location!
+    updateLocation(id: ID!, data: UpdateLocationInput!): Location!
 
     # Participant
     addParticipant(data: CreateParticipantInput!): Participant!
@@ -166,6 +174,18 @@ const resolvers = {
       const location = { id: nanoid(), ...data };
       locations.push(location);
       return location;
+    },
+    updateLocation: (parent, { id, data }) => {
+      const loc_index = locations.findIndex((loc) => loc.id.toString() === id);
+      if (loc_index === -1) {
+        throw new Error("Event not found.");
+      }
+
+      const updated_loc = (locations[loc_index] = {
+        ...locations[loc_index],
+        ...data,
+      });
+      return updated_loc;
     },
 
     // Participant
