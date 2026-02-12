@@ -47,6 +47,15 @@ const typeDefs = `#graphql
     location_id: ID!
   }
 
+  input UpdateEventInput {
+    title: String
+    desc: String
+    date: String
+    from: String
+    to: String
+    location_id: ID
+  }
+
   # Location
   type Location {
     id: ID!
@@ -100,6 +109,7 @@ const typeDefs = `#graphql
 
     # Event
     addEvent(data: CreateEventInput!): Event!
+    updateEvent(id: ID!, data: UpdateEventInput!): Event!
 
     # Location
     addLocation(data: CreateLocationInput!): Location!
@@ -135,6 +145,20 @@ const resolvers = {
       const event = { id: nanoid(), ...data };
       events.push(event);
       return event;
+    },
+    updateEvent: (parent, { id, data }) => {
+      const event_index = events.findIndex(
+        (event) => event.id.toString() === id,
+      );
+      if (event_index === -1) {
+        throw new Error("Event not found.");
+      }
+
+      const updated_event = (events[event_index] = {
+        ...events[event_index],
+        ...data,
+      });
+      return updated_event;
     },
 
     // Location
