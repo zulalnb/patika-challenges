@@ -13,7 +13,7 @@ function NewPostForm() {
 
   const handleSubmit = async (values) => {
     try {
-      await savePost({ variables: { data: values } });
+      await savePost({ variables: { input: values } });
       message.success("Post save successfully!", 4);
       navigate("/");
     } catch (error) {
@@ -42,11 +42,29 @@ function NewPostForm() {
         <Input size="large" />
       </Form.Item>
 
-      <Form.Item label="Short Description" name="short_description">
+      <Form.Item
+        label="Short Description"
+        name="short_description"
+        rules={[
+          {
+            required: true,
+            message: "Please input your short description!",
+          },
+        ]}
+      >
         <Input size="large" />
       </Form.Item>
 
-      <Form.Item label="Description" name="description">
+      <Form.Item
+        label="Description"
+        name="description"
+        rules={[
+          {
+            required: true,
+            message: "Please input your description!",
+          },
+        ]}
+      >
         <Input.TextArea rows={4} size="large" />
       </Form.Item>
 
@@ -54,6 +72,10 @@ function NewPostForm() {
         name="cover"
         label="Cover"
         rules={[
+          {
+            required: true,
+            message: "Please input your cover!",
+          },
           {
             type: "url",
             warningOnly: true,
@@ -68,7 +90,7 @@ function NewPostForm() {
       </Form.Item>
 
       <Form.Item
-        name="user"
+        name="user_id"
         label="User"
         rules={[
           {
@@ -84,7 +106,7 @@ function NewPostForm() {
         >
           {users_data &&
             users_data.users.map((user) => (
-              <Option key={user._id} value={user._id}>
+              <Option key={user.id} value={user.id}>
                 {user.fullName}
               </Option>
             ))}
