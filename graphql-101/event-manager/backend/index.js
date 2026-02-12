@@ -128,6 +128,7 @@ const typeDefs = `#graphql
     # Location
     addLocation(data: CreateLocationInput!): Location!
     updateLocation(id: ID!, data: UpdateLocationInput!): Location!
+    deleteLocation(id: ID!): Location!
 
     # Participant
     addParticipant(data: CreateParticipantInput!): Participant!
@@ -220,6 +221,18 @@ const resolvers = {
         ...data,
       });
       return updated_loc;
+    },
+    deleteLocation: (parent, { id }) => {
+      const loc_index = locations.findIndex((loc) => loc.id.toString() === id);
+
+      if (loc_index === -1) {
+        throw new Error("Location not found.");
+      }
+
+      const deleted_loc = locations[loc_index];
+      locations.splice(loc_index, 1);
+
+      return deleted_loc;
     },
 
     // Participant
