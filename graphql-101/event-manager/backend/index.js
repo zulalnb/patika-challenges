@@ -133,6 +133,7 @@ const typeDefs = `#graphql
     # Participant
     addParticipant(data: CreateParticipantInput!): Participant!
     updateParticipant(id: ID!, data: UpdateParticipantInput!): Participant!
+    deleteParticipant(id: ID!): Participant!
   }
 `;
 
@@ -254,6 +255,20 @@ const resolvers = {
         ...data,
       });
       return updated_participant;
+    },
+    deleteParticipant: (parent, { id }) => {
+      const participant_index = participants.findIndex(
+        (participant) => participant.id.toString() === id,
+      );
+
+      if (participant_index === -1) {
+        throw new Error("Participant not found.");
+      }
+
+      const deleted_participant = participants[participant_index];
+      participants.splice(participant_index, 1);
+
+      return deleted_participant;
     },
   },
   Query: {
