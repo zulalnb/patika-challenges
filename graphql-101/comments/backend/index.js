@@ -58,6 +58,10 @@ const typeDefs = `#graphql
     user_id: ID!
   }
 
+  input UpdateCommentInput {
+    text: String!
+  }
+
   type Query {
     # User
     users: [User!]!
@@ -83,6 +87,7 @@ const typeDefs = `#graphql
 
     # Comment
     createComment(data: CreateCommentInput!): Comment!
+    updateComment(id: ID!, data: UpdateCommentInput!): Comment!
   }
 `;
 
@@ -131,6 +136,18 @@ const resolvers = {
       const comment = { id: nanoid(), ...data };
       comments.push(comment);
       return comment;
+    },
+    updateComment: (parent, { id, data }) => {
+      const comment_index = comments.findIndex((comment) => comment.id === id);
+      if (comment_index === -1) {
+        throw new Error("Comment not found.");
+      }
+
+      const updated_comment = (comments[comment_index] = {
+        ...comments[comment_index],
+        ...data,
+      });
+      return updated_comment;
     },
   },
   Query: {
