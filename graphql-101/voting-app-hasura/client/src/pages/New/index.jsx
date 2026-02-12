@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { NEW_QUESTION_MUTATION } from "./queries";
 
 const initialOptions = [{ title: "" }, { title: "" }];
 
 function NewQuestion() {
+  const [addQuestion, { loading }] = useMutation(NEW_QUESTION_MUTATION);
+
   const [title, setTitle] = useState("");
   const [options, setOptions] = useState(initialOptions);
 
@@ -17,6 +21,26 @@ function NewQuestion() {
     setOptions(newOptions);
   };
 
+  const handleSave = () => {
+    const filledOptions = options.filter((option) => option.title !== "");
+
+    if (title === "") {
+      alert("You need question title");
+      return;
+    }
+    if (filledOptions.length < 2) {
+      alert("You need at least two options");
+      return;
+    }
+
+    addQuestion({
+      variables: { input: { title, options: { data: filledOptions } } },
+    });
+
+    setTitle("");
+    setOptions(initialOptions);
+  };
+
   return (
     <div>
       <h2>Question</h2>
@@ -24,6 +48,7 @@ function NewQuestion() {
         placeholder="Type your question"
         value={title}
         onChange={({ target }) => setTitle(target.value)}
+        disabled={loading}
       />
       <h2>Options</h2>
       {options.map((option, index) => (
@@ -33,15 +58,19 @@ function NewQuestion() {
             placeholder={`Option ${index + 1}`}
             value={option.title}
             onChange={handleChangeOption}
+            disabled={loading}
           />
         </div>
       ))}
 
-      <button onClick={() => setOptions([...options, { title: "" }])}>
+      <button
+        disabled={loading}
+        onClick={() => setOptions([...options, { title: "" }])}
+      >
         New option
       </button>
 
-      <button>Save</button>
+      <button onClick={handleSave}>Save</button>
     </div>
   );
 }
