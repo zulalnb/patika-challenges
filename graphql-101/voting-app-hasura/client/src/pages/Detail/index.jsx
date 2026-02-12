@@ -7,6 +7,7 @@ import Error from "../../components/Error";
 
 function Detail() {
   const [selectedOptionId, setSelectedOptionId] = useState();
+  const [isVoted, setIsVoted] = useState(false);
 
   const { id } = useParams();
 
@@ -15,9 +16,13 @@ function Detail() {
     { variables: { id } },
   );
 
-  const [newVote, { loading: loading_vote }] = useMutation(NEW_VOTE_MUTATION);
+  const [newVote, { loading: loading_vote }] = useMutation(NEW_VOTE_MUTATION, {
+    onCompleted: () => {
+      setIsVoted(true);
+    },
+  });
 
-  const handleClickVote = async () => {
+  const handleClickVote = () => {
     if (!selectedOptionId) {
       return;
     }
@@ -37,25 +42,54 @@ function Detail() {
     questions_by_pk: { options, title },
   } = data;
 
+  const total = options.reduce(
+    (t, value) => t + value.votes_aggregate.aggregate.count,
+    0,
+  );
+
   return (
     <div>
       <h2>{title}</h2>
 
       {options.map((option) => (
-        <label key={option.id} htmlFor={option.id}>
-          <input
-            type="radio"
-            name="selected"
-            value={option.id}
-            onChange={({ target }) => setSelectedOptionId(target.value)}
-          />
-          <span>{option.title}</span>
-        </label>
+        <div key={option.id}>
+          <label htmlFor={option.id}>
+            <input
+              id={option.id}
+              type="radio"
+              name="selected"
+              value={option.id}
+              onChange={({ target }) => setSelectedOptionId(target.value)}
+            />
+            <span>{option.title}</span>
+            {isVoted && (
+              <span className="vote-count">
+                (
+                {(
+                  (option.votes_aggregate.aggregate.count * 100) /
+                  (total || 1)
+                ).toFixed(2)}
+                %)
+              </span>
+            )}
+          </label>
+
+          {isVoted && (
+            <div>
+              <progress
+                value={option.votes_aggregate.aggregate.count}
+                max={total}
+              />
+            </div>
+          )}
+        </div>
       ))}
 
-      <button disabled={loading_vote} onClick={handleClickVote}>
-        Vote
-      </button>
+      {!isVoted && (
+        <button disabled={loading_vote} onClick={handleClickVote}>
+          Vote
+        </button>
+      )}
     </div>
   );
 }
