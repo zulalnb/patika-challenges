@@ -1,23 +1,30 @@
 import { gql } from "@apollo/client";
 
-export const GET_EVENTS = gql`
-  query getAllEvents {
-    events {
-      id
-      title
-      desc
-      date
+export const postFragment = gql`
+  fragment PostFragment on Post {
+    _id
+    title
+    short_description
+    user {
+      profile_photo
     }
   }
 `;
 
-export const EVENTS_SUBSCRIPTION = gql`
-  subscription {
-    eventCreated {
-      id
-      title
-      desc
-      date
+export const GET_POSTS = gql`
+  query GetAllPosts {
+    posts {
+      ...PostFragment
     }
   }
+  ${postFragment}
+`;
+
+export const POSTS_SUBSCRIPTION = gql`
+  subscription {
+    postCreated {
+      ...PostFragment
+    }
+  }
+  ${postFragment}
 `;
