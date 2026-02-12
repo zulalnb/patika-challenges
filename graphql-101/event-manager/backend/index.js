@@ -123,6 +123,7 @@ const typeDefs = `#graphql
     # Event
     addEvent(data: CreateEventInput!): Event!
     updateEvent(id: ID!, data: UpdateEventInput!): Event!
+    deleteEvent(id: ID!): Event!
 
     # Location
     addLocation(data: CreateLocationInput!): Location!
@@ -186,6 +187,20 @@ const resolvers = {
         ...data,
       });
       return updated_event;
+    },
+    deleteEvent: (parent, { id }) => {
+      const event_index = events.findIndex(
+        (event) => event.id.toString() === id,
+      );
+
+      if (event_index === -1) {
+        throw new Error("Event not found.");
+      }
+
+      const deleted_event = events[event_index];
+      events.splice(event_index, 1);
+
+      return deleted_event;
     },
 
     // Location
