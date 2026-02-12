@@ -21,7 +21,7 @@ function Post() {
     return <div>Error: {error.message}</div>;
   }
 
-  const { post } = data;
+  const { posts_by_pk: post } = data;
 
   return (
     <article>
