@@ -96,6 +96,10 @@ const typeDefs = `#graphql
     user_id: ID
   }
 
+  type DeleteAllOutput {
+    count: Int!
+  }
+
   type Query {
     # User
     users: [User!]!
@@ -119,6 +123,7 @@ const typeDefs = `#graphql
     addUser(data: CreateUserInput!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
     deleteUser(id: ID!): User!
+    deleteAllUsers: DeleteAllOutput!
 
     # Event
     addEvent(data: CreateEventInput!): Event!
@@ -168,6 +173,11 @@ const resolvers = {
       users.splice(user_index, 1);
 
       return deleted_user;
+    },
+    deleteAllUsers: () => {
+      const length = users.length;
+      users.splice(0, length);
+      return { count: length };
     },
 
     // User
