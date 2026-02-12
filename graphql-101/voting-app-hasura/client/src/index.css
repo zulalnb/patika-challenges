@@ -21,3 +21,8 @@ button {
   padding: 6px;
   margin-top: 10px;
 }
+
+label {
+  display: block;
+  margin: 8px;
+}

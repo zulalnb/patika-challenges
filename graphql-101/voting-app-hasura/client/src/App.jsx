@@ -1,6 +1,7 @@
 import { Link, Route, Routes } from "react-router-dom";
 import Questions from "./pages/Questions";
-import New from "./pages/New";
+import NewQuestion from "./pages/New";
+import Detail from "./pages/Detail";
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
       <hr />
       <Routes>
         <Route exact path="/" element={<Questions />} />
-        <Route exact path="/new" element={<New />} />
+        <Route exact path="/new" element={<NewQuestion />} />
+        <Route exact path="q/:id" element={<Detail />} />
       </Routes>
     </div>
   );
