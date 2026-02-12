@@ -4,6 +4,7 @@ import { Image, Typography } from "antd";
 
 import { GET_POST } from "./queries";
 import Loading from "components/Loading";
+import Comments from "./Comments";
 import styles from "./styles.module.css";
 
 const { Paragraph, Title } = Typography;
@@ -25,10 +26,11 @@ function Post() {
   return (
     <article>
       <Title>{post.title}</Title>
-      <Image src={post.cover} />
+      <Image src={post.cover} alt={post.title} />
       <Paragraph className={styles.description}>
         <p>{post.description}</p>
       </Paragraph>
+      <Comments post_id={id} />
     </article>
   );
 }

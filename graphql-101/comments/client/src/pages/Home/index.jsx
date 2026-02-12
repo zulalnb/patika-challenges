@@ -18,7 +18,6 @@ function Home() {
   return (
     <div>
       <List
-        className="demo-loadmore-list"
         loading={false}
         itemLayout="horizontal"
         dataSource={data.posts}
