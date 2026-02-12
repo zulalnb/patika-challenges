@@ -1,0 +1,17 @@
+{
+  "name": "meeting-app-hasura-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/zulalnb/meeting-app-hasura-backend.git",
+  "author": "Zülal <zllnbn1997@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon ./src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
