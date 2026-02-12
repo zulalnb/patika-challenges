@@ -90,6 +90,7 @@ const typeDefs = `#graphql
     # Comment
     createComment(data: CreateCommentInput!): Comment!
     updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+    deleteComment(id: ID!): Comment!
   }
 `;
 
@@ -174,6 +175,18 @@ const resolvers = {
         ...data,
       });
       return updated_comment;
+    },
+    deleteComment: (parent, { id }) => {
+      const comment_index = comments.findIndex((comment) => comment.id === id);
+
+      if (comment_index === -1) {
+        throw new Error("Comment not found.");
+      }
+
+      const deleted_comment = comments[comment_index];
+      comments.splice(comment_index, 1);
+
+      return deleted_comment;
     },
   },
   Query: {
