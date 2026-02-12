@@ -16,3 +16,13 @@ export const INSERT_USER_MUTATION = gql`
     }
   }
 `;
+
+export const LOGIN_QUERY = gql`
+  query login($email: String!) {
+    users(where: { email: { _eq: $email } }) {
+      id
+      email
+      password
+    }
+  }
+`;

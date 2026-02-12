@@ -2,8 +2,8 @@ import express from "express";
 import Boom from "boom";
 import bcrypt from "bcryptjs";
 import Hasura from "../../clients/hasura";
-import { INSERT_USER_MUTATION, IS_EXISTS_USER } from "./queries";
-import { registerSchema } from "./validations";
+import { INSERT_USER_MUTATION, IS_EXISTS_USER, LOGIN_QUERY } from "./queries";
+import { loginSchema, registerSchema } from "./validations";
 import { signAccessToken } from "./helpers";
 
 const router = express.Router();
@@ -43,6 +43,40 @@ router.post("/register", async (req, res, next) => {
     res.json({ accessToken });
   } catch (err) {
     return next(Boom.badRequest(err));
+  }
+});
+
+router.post("/login", async (req, res, next) => {
+  const input = req.body.input.data;
+  input.email = input.email.toLowerCase();
+
+  const { error } = loginSchema.validate(input);
+
+  if (error) {
+    return next(Boom.badRequest(error.details[0].message));
+  }
+
+  try {
+    const { users } = await Hasura.request(LOGIN_QUERY, {
+      email: input.email,
+    });
+
+    if (users.length === 0) {
+      throw Boom.unauthorized("Email or password is incorrect");
+    }
+
+    const user = users[0];
+
+    const isMatch = await bcrypt.compare(input.password, user.password);
+
+    if (!isMatch) {
+      throw Boom.unauthorized("Email or password is incorrect");
+    }
+
+    const accessToken = await signAccessToken(user);
+    return res.json({ accessToken });
+  } catch (err) {
+    return next(err);
   }
 });
 
