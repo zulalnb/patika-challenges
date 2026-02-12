@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { Button, Divider, Flex, List } from "antd";
-import { COMMENTS_SUBSCRIPTIONS, GET_POST_COMMENTS } from "./queries";
+import { COMMENTS_SUBSCRIPTIONS, GET_POST_COMMENTS } from "../queries";
 import Comment from "components/Comment";
+import NewCommentForm from "./NewCommentForm";
 
 function Comments({ post_id }) {
   const [loadComments, { called, loading, error, data, subscribeToMore }] =
@@ -34,7 +35,7 @@ function Comments({ post_id }) {
 
   return (
     <div>
-      <Divider>Comments</Divider>
+      <Divider orientation="left">Comments</Divider>
       {btnIsVisible && (
         <Flex justify="center">
           <Button loading={loading} onClick={loadComments}>
@@ -64,6 +65,8 @@ function Comments({ post_id }) {
           )}
         />
       )}
+      <Divider orientation="left">New Comment</Divider>
+      <NewCommentForm post_id={post_id} />
     </div>
   );
 }
