@@ -4,6 +4,8 @@ import { nanoid } from "nanoid";
 import { users, posts, comments } from "./data.js";
 
 const typeDefs = `#graphql
+
+  # User
   type User {
     id: ID!
     fullName: String!
@@ -11,6 +13,11 @@ const typeDefs = `#graphql
     comments: [Comment!]!
   }
 
+  input CreateUserInput {
+    fullName: String!
+  }
+
+  # Post
   type Post {
     id: ID!
     title: String!
@@ -19,6 +26,12 @@ const typeDefs = `#graphql
     comments: [Comment!]!
   }
 
+  input CreatePostInput {
+    title: String!
+    user_id: ID!
+  }
+
+  # Comment
   type Comment {
     id: ID!
     text: String!
@@ -26,6 +39,12 @@ const typeDefs = `#graphql
     user_id: ID!
     user: User!
     post: Post!
+  }
+
+  input CreateCommentInput {
+    text: String!
+    post_id: ID!
+    user_id: ID!
   }
 
   type Query {
@@ -43,26 +62,26 @@ const typeDefs = `#graphql
   }
 
   type Mutation {
-    createUser(fullName: String!): User!
-    createPost(title: String!, user_id: ID!): Post!
-    createComment(text: String!, post_id: ID!, user_id: ID!): Comment!
+    createUser(data: CreateUserInput!): User!
+    createPost(data: CreatePostInput!): Post!
+    createComment(data: CreateCommentInput!): Comment!
   }
 `;
 
 const resolvers = {
   Mutation: {
-    createUser: (parent, { fullName }) => {
-      const user = { id: nanoid(), fullName };
+    createUser: (parent, { data }) => {
+      const user = { id: nanoid(), ...data };
       users.push(user);
       return user;
     },
-    createPost: (parents, { title, user_id }) => {
-      const post = { id: nanoid(), title, user_id };
+    createPost: (parents, { data }) => {
+      const post = { id: nanoid(), ...data };
       posts.push(post);
       return post;
     },
-    createComment: (parent, { text, post_id, user_id }) => {
-      const comment = { id: nanoid(), text, post_id, user_id };
+    createComment: (parent, { data }) => {
+      const comment = { id: nanoid(), ...data };
       comments.push(comment);
       return comment;
     },
