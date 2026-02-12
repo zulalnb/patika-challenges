@@ -143,16 +143,28 @@ const typeDefs = `#graphql
     deleteParticipant(id: ID!): Participant!
     deleteAllParticipants: DeleteAllOutput!
   }
+
+  type Subscription {
+    userCreated: User!
+  }
 `;
 
 const pubSub = createPubSub();
 
 const resolvers = {
+  Subscription: {
+    userCreated: {
+      subscribe: () => pubSub.subscribe("userCreated"),
+    },
+  },
   Mutation: {
     // User
-    addUser: (_, { data }) => {
+    addUser: (_, { data }, { pubSub }) => {
       const user = { id: nanoid(), ...data };
       users.push(user);
+
+      pubSub.publish("userCreated", { userCreated: user });
+
       return user;
     },
     updateUser: (_, { id, data }) => {
