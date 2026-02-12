@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Select } from "antd";
+import { Button, Form, Input, Select } from "antd";
 
 const { Option } = Select;
 
@@ -77,10 +77,6 @@ function NewPostForm() {
           <Option value="female">female</Option>
           <Option value="other">other</Option>
         </Select>
-      </Form.Item>
-
-      <Form.Item name="remember" valuePropName="checked">
-        <Checkbox>Remember me</Checkbox>
       </Form.Item>
 
       <Form.Item>
