@@ -32,6 +32,16 @@ const typeDefs = `#graphql
     location: Location!
   }
 
+  input CreateEventInput {
+    title: String!
+    desc: String!
+    date: String!
+    from: String!
+    to: String!
+    user_id: ID!
+    location_id: ID!
+  }
+
   # Location
   type Location {
     id: ID!
@@ -69,6 +79,9 @@ const typeDefs = `#graphql
   type Mutation {
     # User
     createUser(data: CreateUserInput!): User!
+
+    # Event
+    createEvent(data: CreateEventInput!): Event!
   }
 `;
 
@@ -79,6 +92,13 @@ const resolvers = {
       const user = { id: nanoid(), ...data };
       users.push(user);
       return user;
+    },
+
+    // User
+    createEvent: (parent, { data }) => {
+      const event = { id: nanoid(), ...data };
+      events.push(event);
+      return event;
     },
   },
   Query: {
@@ -109,11 +129,14 @@ const resolvers = {
     events: (parent) => events.filter((event) => event.user_id === parent.id),
   },
   Event: {
-    user: (parent) => users.find((user) => user.id === parent.user_id),
+    user: (parent) =>
+      users.find((user) => user.id.toString() === parent.user_id),
     participants: (parent) =>
       participants.filter((participant) => participant.event_id === parent.id),
     location: (parent) =>
-      locations.find((location) => location.id === parent.location_id),
+      locations.find(
+        (location) => location.id.toString() === parent.location_id,
+      ),
   },
 
   Participant: {
