@@ -8,6 +8,7 @@ const typeDefs = `#graphql
     username: String!
     email: String!
     participants: [Participant!]!
+    events: [Event!]!
   }
 
   type Event {
@@ -78,6 +79,11 @@ const resolvers = {
       participants.find((participant) => participant.id.toString() === args.id),
   },
 
+  User: {
+    participants: (parent) =>
+      participants.filter((participant) => participant.user_id === parent.id),
+    events: (parent) => events.filter((event) => event.user_id === parent.id),
+  },
   Event: {
     user: (parent) => users.find((user) => user.id === parent.user_id),
     participants: (parent) =>
@@ -88,6 +94,7 @@ const resolvers = {
 
   Participant: {
     user: (parent) => users.find((user) => user.id === parent.user_id),
+    event: (parent) => events.find((event) => event.user_id === parent.user_id),
   },
 };
 
