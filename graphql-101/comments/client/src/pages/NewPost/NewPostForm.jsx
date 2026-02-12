@@ -68,7 +68,7 @@ function NewPostForm() {
       </Form.Item>
 
       <Form.Item
-        name="user_id"
+        name="user"
         label="User"
         rules={[
           {
@@ -84,7 +84,7 @@ function NewPostForm() {
         >
           {users_data &&
             users_data.users.map((user) => (
-              <Option key={user.id} value={user.id}>
+              <Option key={user._id} value={user._id}>
                 {user.fullName}
               </Option>
             ))}
