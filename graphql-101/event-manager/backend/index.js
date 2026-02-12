@@ -91,6 +91,11 @@ const typeDefs = `#graphql
     user_id: ID!
   }
 
+  input UpdateParticipantInput {
+    event_id: ID
+    user_id: ID
+  }
+
   type Query {
     # User
     users: [User!]!
@@ -124,6 +129,7 @@ const typeDefs = `#graphql
 
     # Participant
     addParticipant(data: CreateParticipantInput!): Participant!
+    updateParticipant(id: ID!, data: UpdateParticipantInput!): Participant!
   }
 `;
 
@@ -178,7 +184,7 @@ const resolvers = {
     updateLocation: (parent, { id, data }) => {
       const loc_index = locations.findIndex((loc) => loc.id.toString() === id);
       if (loc_index === -1) {
-        throw new Error("Event not found.");
+        throw new Error("Location not found.");
       }
 
       const updated_loc = (locations[loc_index] = {
@@ -193,6 +199,20 @@ const resolvers = {
       const participant = { id: nanoid(), ...data };
       participants.push(participant);
       return participant;
+    },
+    updateParticipant: (parent, { id, data }) => {
+      const participant_index = participants.findIndex(
+        (participant) => participant.id.toString() === id,
+      );
+      if (participant_index === -1) {
+        throw new Error("Participant not found.");
+      }
+
+      const updated_participant = (participants[participant_index] = {
+        ...participants[participant_index],
+        ...data,
+      });
+      return updated_participant;
     },
   },
   Query: {
@@ -247,7 +267,7 @@ const resolvers = {
       users.find((user) => user.id.toString() === parent.user_id.toString()),
     event: (parent) =>
       events.find(
-        (event) => event.user_id.toString() === parent.user_id.toString(),
+        (event) => event.id.toString() === parent.event_id.toString(),
       ),
   },
 };
