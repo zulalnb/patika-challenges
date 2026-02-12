@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import Hasura from "../../clients/hasura";
 import { INSERT_USER_MUTATION, IS_EXISTS_USER, LOGIN_QUERY } from "./queries";
 import { loginSchema, registerSchema } from "./validations";
-import { signAccessToken } from "./helpers";
+import { signAccessToken, verifyAccessToken } from "./helpers";
 
 const router = express.Router();
 
@@ -78,6 +78,14 @@ router.post("/login", async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+});
+
+router.post("/me", verifyAccessToken, (req, res, next) => {
+  const { aud } = req.payload;
+
+  return res.json({
+    user_id: aud,
+  });
 });
 
 export default router;
