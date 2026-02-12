@@ -1,25 +1,11 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useSubscription } from "@apollo/client";
 import { Avatar, List } from "antd";
-import { GET_POSTS, POSTS_SUBSCRIPTION } from "./queries";
+import { POSTS_SUBSCRIPTION } from "./queries";
 import Loading from "components/Loading";
 
 function Home() {
-  const { loading, error, data, subscribeToMore } = useQuery(GET_POSTS);
-
-  useEffect(() => {
-    subscribeToMore({
-      document: POSTS_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-
-        return {
-          posts: [subscriptionData.data.postCreated, ...prev.posts],
-        };
-      },
-    });
-  }, [subscribeToMore]);
+  const { loading, error, data } = useSubscription(POSTS_SUBSCRIPTION);
 
   if (loading) {
     return <Loading />;
@@ -39,7 +25,7 @@ function Home() {
           <List.Item>
             <List.Item.Meta
               avatar={<Avatar src={item.user.profile_photo} />}
-              title={<Link to={`/post/${item._id}`}>{item.title}</Link>}
+              title={<Link to={`/post/${item.id}`}>{item.title}</Link>}
               description={item.short_description}
             />
           </List.Item>
