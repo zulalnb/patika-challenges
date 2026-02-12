@@ -9,12 +9,19 @@ const typeDefs = `#graphql
   type User {
     id: ID!
     fullName: String!
+    age: Int!
     posts: [Post!]!
     comments: [Comment!]!
   }
 
   input CreateUserInput {
     fullName: String!
+    age: Int!
+  }
+
+  input UpdateUserInput {
+    fullName: String
+    age: Int
   }
 
   # Post
@@ -62,24 +69,47 @@ const typeDefs = `#graphql
   }
 
   type Mutation {
+    # User
     createUser(data: CreateUserInput!): User!
+    updateUser(id: ID, data: UpdateUserInput!): User!
+
+    # Post
     createPost(data: CreatePostInput!): Post!
+
+    # Comment
     createComment(data: CreateCommentInput!): Comment!
   }
 `;
 
 const resolvers = {
   Mutation: {
+    // User
     createUser: (parent, { data }) => {
       const user = { id: nanoid(), ...data };
       users.push(user);
       return user;
     },
+    updateUser: (parent, { id, data }) => {
+      const user_index = users.findIndex((user) => user.id === id);
+      if (user_index === -1) {
+        throw new Error("User not found.");
+      }
+
+      const updated_user = (users[user_index] = {
+        ...users[user_index],
+        ...data,
+      });
+      return updated_user;
+    },
+
+    // Post
     createPost: (parents, { data }) => {
       const post = { id: nanoid(), ...data };
       posts.push(post);
       return post;
     },
+
+    // Comment
     createComment: (parent, { data }) => {
       const comment = { id: nanoid(), ...data };
       comments.push(comment);
