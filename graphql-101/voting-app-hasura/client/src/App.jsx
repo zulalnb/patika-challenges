@@ -9,7 +9,7 @@ function App() {
         <Link to="/">Questions</Link>
         <Link to="/new">New Question</Link>
       </nav>
-
+      <hr />
       <Routes>
         <Route exact path="/" element={<Questions />} />
         <Route exact path="/new" element={<New />} />
