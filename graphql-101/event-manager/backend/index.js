@@ -51,11 +51,23 @@ const typeDefs = `#graphql
     lng: Float!
   }
 
+  input CreateLocationInput {
+    name: String!
+    desc: String!
+    lat: Float!
+    lng: Float!
+  }
+
   # Participant
   type Participant {
     id: ID!
     event: Event!
     user: User!
+  }
+
+  input CreateParticipantInput {
+    event_id: ID!
+    user_id: ID!
   }
 
   type Query {
@@ -78,27 +90,47 @@ const typeDefs = `#graphql
 
   type Mutation {
     # User
-    createUser(data: CreateUserInput!): User!
+    addUser(data: CreateUserInput!): User!
 
     # Event
-    createEvent(data: CreateEventInput!): Event!
+    addEvent(data: CreateEventInput!): Event!
+
+    # Location
+    addLocation(data: CreateLocationInput!): Location!
+
+    # Participant
+    addParticipant(data: CreateParticipantInput!): Participant!
   }
 `;
 
 const resolvers = {
   Mutation: {
     // User
-    createUser: (parent, { data }) => {
+    addUser: (parent, { data }) => {
       const user = { id: nanoid(), ...data };
       users.push(user);
       return user;
     },
 
     // User
-    createEvent: (parent, { data }) => {
+    addEvent: (parent, { data }) => {
       const event = { id: nanoid(), ...data };
       events.push(event);
       return event;
+    },
+
+    // Location
+    addLocation: (parent, { data }) => {
+      const location = { id: nanoid(), ...data };
+      locations.push(location);
+      return location;
+    },
+
+    // Participant
+    addParticipant: (parent, { data }) => {
+      const participant = { id: nanoid(), ...data };
+      participants.push(participant);
+      return participant;
     },
   },
   Query: {
@@ -125,23 +157,36 @@ const resolvers = {
 
   User: {
     participants: (parent) =>
-      participants.filter((participant) => participant.user_id === parent.id),
-    events: (parent) => events.filter((event) => event.user_id === parent.id),
+      participants.filter(
+        (participant) =>
+          participant.user_id.toString() === parent.id.toString(),
+      ),
+    events: (parent) =>
+      events.filter(
+        (event) => event.user_id.toString() === parent.id.toString(),
+      ),
   },
   Event: {
     user: (parent) =>
-      users.find((user) => user.id.toString() === parent.user_id),
+      users.find((user) => user.id.toString() === parent.user_id.toString()),
     participants: (parent) =>
-      participants.filter((participant) => participant.event_id === parent.id),
+      participants.filter(
+        (participant) =>
+          participant.event_id.toString() === parent.id.toString(),
+      ),
     location: (parent) =>
       locations.find(
-        (location) => location.id.toString() === parent.location_id,
+        (location) => location.id.toString() === parent.location_id.toString(),
       ),
   },
 
   Participant: {
-    user: (parent) => users.find((user) => user.id === parent.user_id),
-    event: (parent) => events.find((event) => event.user_id === parent.user_id),
+    user: (parent) =>
+      users.find((user) => user.id.toString() === parent.user_id.toString()),
+    event: (parent) =>
+      events.find(
+        (event) => event.user_id.toString() === parent.user_id.toString(),
+      ),
   },
 };
 
