@@ -19,6 +19,11 @@ const typeDefs = `#graphql
     email: String!
   }
 
+  input UpdateUserInput {
+    username: String
+    email: String
+  }
+
   # Events
   type Event {
     id: ID!
@@ -91,6 +96,7 @@ const typeDefs = `#graphql
   type Mutation {
     # User
     addUser(data: CreateUserInput!): User!
+    updateUser(id: ID!, data: UpdateUserInput!): User!
 
     # Event
     addEvent(data: CreateEventInput!): Event!
@@ -110,6 +116,18 @@ const resolvers = {
       const user = { id: nanoid(), ...data };
       users.push(user);
       return user;
+    },
+    updateUser: (parent, { id, data }) => {
+      const user_index = users.findIndex((user) => user.id.toString() === id);
+      if (user_index === -1) {
+        throw new Error("User not found.");
+      }
+
+      const updated_user = (users[user_index] = {
+        ...users[user_index],
+        ...data,
+      });
+      return updated_user;
     },
 
     // User
