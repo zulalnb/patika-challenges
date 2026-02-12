@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Button, Form, Input, Select } from "antd";
-import { useQuery } from "@apollo/client";
-import { GET_USERS } from "./queries";
+import { useRef, useState } from "react";
+import { Button, Form, Input, message, Select } from "antd";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_COMMENT_MUTATION, GET_USERS } from "./queries";
 
 const { Option } = Select;
 
@@ -67,9 +67,20 @@ const CommentInput = (props) => {
 };
 
 function NewCommentForm({ post_id }) {
-  const onFinish = (values) => {
-    console.log("Received values from form: ", values);
+  const [saveComment, { loading }] = useMutation(CREATE_COMMENT_MUTATION);
+
+  const formRef = useRef();
+
+  const handleSubmit = async (values) => {
+    try {
+      await saveComment({ variables: values });
+      message.success("Comment submit successfully!", 3);
+      formRef.current.resetFields();
+    } catch (error) {
+      message.error("Failed to submit comment: " + error.message, 10);
+    }
   };
+
   const checkPrice = (_, value) => {
     if (value.text.length > 0) {
       return Promise.resolve();
@@ -78,9 +89,11 @@ function NewCommentForm({ post_id }) {
   };
   return (
     <Form
+      ref={formRef}
+      disabled={loading}
       name="customized_form_controls"
       layout="inline"
-      onFinish={onFinish}
+      onFinish={handleSubmit}
       initialValues={{
         data: {
           text: "",
@@ -100,7 +113,7 @@ function NewCommentForm({ post_id }) {
         <CommentInput />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={loading}>
           Submit
         </Button>
       </Form.Item>

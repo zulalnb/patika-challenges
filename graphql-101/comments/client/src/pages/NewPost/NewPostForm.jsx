@@ -12,7 +12,6 @@ function NewPostForm() {
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
-    console.log("submit", values);
     try {
       await savePost({ variables: { data: values } });
       message.success("Post save successfully!", 4);
