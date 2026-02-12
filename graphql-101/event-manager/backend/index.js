@@ -118,6 +118,7 @@ const typeDefs = `#graphql
     # User
     addUser(data: CreateUserInput!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
+    deleteUser(id: ID!): User!
 
     # Event
     addEvent(data: CreateEventInput!): Event!
@@ -152,6 +153,18 @@ const resolvers = {
         ...data,
       });
       return updated_user;
+    },
+    deleteUser: (parent, { id }) => {
+      const user_index = users.findIndex((user) => user.id.toString() === id);
+
+      if (user_index === -1) {
+        throw new Error("User not found.");
+      }
+
+      const deleted_user = users[user_index];
+      users.splice(user_index, 1);
+
+      return deleted_user;
     },
 
     // User
