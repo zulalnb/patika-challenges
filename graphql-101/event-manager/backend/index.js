@@ -129,6 +129,7 @@ const typeDefs = `#graphql
     addEvent(data: CreateEventInput!): Event!
     updateEvent(id: ID!, data: UpdateEventInput!): Event!
     deleteEvent(id: ID!): Event!
+    deleteAllEvents: DeleteAllOutput!
 
     # Location
     addLocation(data: CreateLocationInput!): Location!
@@ -213,6 +214,11 @@ const resolvers = {
       events.splice(event_index, 1);
 
       return deleted_event;
+    },
+    deleteAllEvents: () => {
+      const length = events.length;
+      events.splice(0, length);
+      return { count: length };
     },
 
     // Location
