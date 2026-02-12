@@ -11,30 +11,33 @@ export const GET_POST = gql`
   }
 `;
 
+const commentFragment = gql`
+  fragment CommentFragment on Comment {
+    id
+    text
+    user {
+      fullName
+      profile_photo
+    }
+  }
+`;
+
 export const GET_POST_COMMENTS = gql`
   query getCommentsByPost($id: ID!) {
     post(id: $id) {
       comments {
-        id
-        text
-        user {
-          fullName
-          profile_photo
-        }
+        ...CommentFragment
       }
     }
   }
+  ${commentFragment}
 `;
 
 export const COMMENTS_SUBSCRIPTIONS = gql`
   subscription CommentCreated($post_id: ID) {
     commentCreated(post_id: $post_id) {
-      id
-      text
-      user {
-        fullName
-        profile_photo
-      }
+      ...CommentFragment
     }
   }
+  ${commentFragment}
 `;
